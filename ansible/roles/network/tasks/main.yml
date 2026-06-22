@@ -1,0 +1,6 @@
+---
+# Crée le réseau Docker partagé par les conteneurs
+- name: Create docker network
+  community.docker.docker_network:
+    name: "{{ network_name }}"
+    state: present

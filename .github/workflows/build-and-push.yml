@@ -44,3 +44,30 @@ jobs:
           context: ./http-server
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
           push: true
+
+  # Déploiement continu : rejoue le playbook Ansible sur le serveur
+  # une fois les nouvelles images publiées sur Docker Hub
+  deploy:
+    needs: build-and-push-docker-image
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Ansible
+        run: |
+          pip install ansible
+          ansible-galaxy collection install community.docker
+
+      # La clé SSH vient d'un secret GitHub, écrite dans un fichier temporaire
+      - name: Write SSH private key
+        run: |
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ansible_key
+          chmod 600 ansible_key
+
+      - name: Run Ansible playbook
+        working-directory: ./ansible
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "false"
+        # on surcharge le chemin de la clé (le chemin local du poste n'existe pas dans le runner)
+        run: ansible-playbook -i inventories/setup.yml playbook.yml -e "ansible_ssh_private_key_file=$GITHUB_WORKSPACE/ansible_key"

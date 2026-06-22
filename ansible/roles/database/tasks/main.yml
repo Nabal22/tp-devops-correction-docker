@@ -1,0 +1,14 @@
+---
+# Lance le conteneur PostgreSQL
+# (l'image fixe déjà POSTGRES_DB=db et POSTGRES_USER=usr, on injecte juste le mot de passe)
+- name: Run database
+  community.docker.docker_container:
+    name: database
+    image: "{{ dockerhub_user }}/tp-devops-database:latest"
+    pull: true
+    networks:
+      - name: "{{ network_name }}"
+    env:
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+    state: started
+    restart_policy: unless-stopped

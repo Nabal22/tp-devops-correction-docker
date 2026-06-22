@@ -1,0 +1,14 @@
+---
+# Lance le reverse proxy Apache (httpd) exposé sur le port 80
+# Sa conf redirige / vers http://simple-api:8080/
+- name: Run httpd proxy
+  community.docker.docker_container:
+    name: httpd
+    image: "{{ dockerhub_user }}/tp-devops-httpd:latest"
+    pull: true
+    networks:
+      - name: "{{ network_name }}"
+    ports:
+      - "80:80"
+    state: started
+    restart_policy: unless-stopped
