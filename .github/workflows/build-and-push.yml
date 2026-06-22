@@ -72,9 +72,14 @@ jobs:
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ansible_key
           chmod 600 ansible_key
 
+      # Le mot de passe du vault vient aussi d'un secret GitHub
+      - name: Write Ansible Vault password
+        run: echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > vault_pass
+
       - name: Run Ansible playbook
         working-directory: ./ansible
         env:
           ANSIBLE_HOST_KEY_CHECKING: "false"
         # on surcharge le chemin de la clé (le chemin local du poste n'existe pas dans le runner)
-        run: ansible-playbook -i inventories/setup.yml playbook.yml -e "ansible_ssh_private_key_file=$GITHUB_WORKSPACE/ansible_key"
+        # et on fournit le mot de passe du vault pour déchiffrer les secrets
+        run: ansible-playbook -i inventories/setup.yml playbook.yml -e "ansible_ssh_private_key_file=$GITHUB_WORKSPACE/ansible_key" --vault-password-file $GITHUB_WORKSPACE/vault_pass

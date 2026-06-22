@@ -1,6 +1,0 @@
----
-# Variables partagées par tous les hôtes
-dockerhub_user: nabal7
-network_name: app-network
-# TODO : déplacer ce secret dans un Ansible Vault (étape "going further")
-postgres_password: pwd

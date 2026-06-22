@@ -1,0 +1,7 @@
+---
+# Variables non sensibles (en clair)
+dockerhub_user: nabal7
+network_name: app-network
+
+# Le mot de passe vient du fichier vault.yml chiffré (variable vault_postgres_password)
+postgres_password: "{{ vault_postgres_password }}"
