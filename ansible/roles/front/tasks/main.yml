@@ -1,0 +1,11 @@
+---
+# Lance le front-end Vue (servi par nginx) — ciblé par le proxy httpd sur "/"
+- name: Run front
+  community.docker.docker_container:
+    name: front
+    image: "{{ dockerhub_user }}/tp-devops-front:latest"
+    pull: true
+    networks:
+      - name: "{{ network_name }}"
+    state: started
+    restart_policy: unless-stopped
